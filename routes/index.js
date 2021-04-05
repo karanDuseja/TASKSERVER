@@ -9,6 +9,8 @@ const Images = require('./image');
 const path = "C:/Users/admin/formserver/public/images"
 const State = require("./state");
 const City = require("./city");
+const Array = require("./arraydata");
+const { response } = require('express');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -309,14 +311,297 @@ function saveCity(){
 
   const result14= await Form.find(   ).sort( { age: -1 } )
   //  console.log("ssss",result14)
+
+
+
   // const result15= await Form.find( "$orderby", { age: -1 } )
   //  console.log("ssss",result15)
 
 
 
-  // const result16= await Form.find({ $currentDate: { 'firstname' : Date} })
+  // const result16= await Form.updateOne(
+  //   { state: 1 },
+  //   {
+  //     $currentDate: {
+  //       birthday: true,
+  //        "birthday":  { $type: "timestamp" }
+  //     },
+  //     $set: {
+  //        "birthday":  { $type: "timestamp" }
+  //     }
+  //   })
   // console.log("ssss",result16)
+//   const result17= await Form.update(
+//     { firstname: "karan" },
+//     { $inc: { age: -2 } }
+//  )
+  // console.log("ssss",result17)
+
+  const result18= await Form.aggregate(
+    [
+      {
+        $group:
+          {
+            _id:"$_id",
+            minAge: { $min: "$age" }
+          }
+      }
+    ]
+ )
+  //  console.log("ssss",result18)
+
+//   const result19= await Form.update(
+//     { firstname: 'karan'},
+//     { $mul: { age: 2} }
+//  )
+
+  // console.log("ssss",result19)
+
+  // const result20= await Form.update( {  firstname: "karan" }, { $rename: { "firstname": "name" } } )
+
+  // console.log("ssss",result20)
+
+
+
+  // const result21= await Form.update(
+  //   { firstname: 'hgfhggh'},
+  //   {
+  //      $set: { age: "20" },
+  //      $setOnInsert: { percentage: 120 }
+  //   },
+  //   { upsert: true }
+  // )
+
+  // console.log("ssss",result21)
+
+
+
+
+//   const result22= await Form.update(
+//     { firstname: "karan" },
+//     { $unset: { age: "", percentage: "" } }
+//  )
+
+//  console.log("ssss",result22)
+
+
+const result23= await Array.find( { tags: { $all: [ "appliance", "school", "book", 'headphone' ] } } )
+
+//  console.log("ssss",result23)
+
+
+const result24= await Array.find(
+  { qty: { $elemMatch: { size: "6", num: { $gte: 10 } } } }
+)
+//  console.log("ssss",result24)
+
+
+
+const result25= await Array.aggregate(
+  [
+    {
+      // $project:
+      //   {
+      $project:{_id:"$_id",numberOfTags: { $size: "$tags" }}
+          
+        // }
+    }
+  ]
+)
+//  console.log("ssss",result25)
+
+const result26= await Array.find(
+  { code: 'xyz', tags: { $in: 'school' } },
+    { "tags.$": 1 } 
+)
+//  console.log("ssss",result26)
+
+const result27= await Array.find( 
+  { }, 
+  {  "tags": { $slice: 1} }
+   )
+//  console.log("ssss",result27)
+
+
+
+// const result28= await Array.update(
+//   { code: "xyz" },
+//   { $push: { tags: [ 'hi', 'bye', '69' ] }  }
+// )
+//  console.log("ssss",result28)
+
+//  console.log("ssss",result27)
+
+
+// const result29= await Array.updateOne(
+//   { code: "xyz" },
+//   { $pull: { tags: { $in:[ 'hi', 'bye', '69' ]  }}  }
+// )
+//  console.log("ssss",result29)
+
+
+// const result30= await Array.update(
+//    { code: "xyz"}, 
+//    { $pop: { tags: -1 } } )
+
+
+//  console.log("ssss",result30)
+
+
+// const result31= await Array.update(
+//   { code: "xyz"},
+//   { $addToSet: { tags: "accessories" } }
+// )
+
+//  console.log("ssss",result31)
+
+
+
+// const result32= await Array.aggregate( [
+//   {
+//      $addFields: {
+//         "fuel_type": "unleaded"
+//      }
+//   }
+// ] )
+//  console.log("ssss",result32)
+
+const result33= await Array.aggregate(
+  [
+    {
+      $match: {
+        scores: {
+          $gt: '50'
+        }
+      }
+    },
+    {
+      $count: "HPscore"
+    }
+  ]
+)
+
+//  console.log("ssss",result33)
+
+const result34= await Array.aggregate([
+  { $limit : 5 }
+]);
+//  console.log("ssss",result34)
+
+
+const result35= await Array.aggregate([
+  { $skip : 5 }
+]);
+//  console.log("ssss",result35)
+
+const result36= await Array.aggregate( [
+  
+  { $merge : { 
+    into: "cities",
+      
+      } }
+],function(err,response){
+  City.find({},function(err,response){
+    // console.log("response",response)
+  })
+  
+ })
+
+ console.log("ssskkkkkkks",result36)
+ 
+
+ const result37= await Array.aggregate( [ { $unwind : "$qty" } ] )
+
+
+//  console.log("sssssssssss",result37)
+
+const result38= await Array.aggregate([
+  {
+    $lookup:
+      {
+        from: "cities",
+        localField: "name",
+        foreignField: "tags",
+        as: "inventory_docs"
+        
+      }
+
+    },
+      
+    //   $project:   {
+
+    //   abc: "$inventory_docs"   
+    //   }
+    // },
+      {$unwind: "$inventory_docs"}
+    
+
+      
+      
+  
+ 
+])
+//  console.log("sssssssssss",result38)
+
+
+
+
+
+
+
+
 
  }
 
   getDocument()
+
+
+  function arraydata(){
+    var array= [
+      {
+       
+        code: "xyz",
+        tags: [ "school", "book", "bag", "headphone", "appliance" ],
+        qty: [
+               { size: "S", num: 10, color: "blue" },
+               { size: "M", num: 45, color: "blue" },
+               { size: "L", num: 100, color: "green" }
+             ]
+     },
+     {
+       
+        code: "abc",
+        tags: [ "appliance", "school", "book" ],
+        qty: [
+               { size: "6", num: 100, color: "green" },
+               { size: "6", num: 50, color: "blue" },
+               { size: "8", num: 100, color: "brown" }
+             ]
+     },
+     {
+       
+        code: "efg",
+        tags: [ "school", "book" ],
+        qty: [
+               { size: "S", num: 10, color: "blue" },
+               { size: "M", num: 100, color: "blue" },
+               { size: "L", num: 100, color: "green" }
+             ]
+     },
+     {
+        
+        code: "ijk",
+        tags: [ "electronics", "school" ],
+        qty: [
+               { size: "M", num: 100, color: "green" }
+             ]
+     
+            }]
+       for(var i=0;i<array.length;i++){
+         const arraydata = new Array(array[i])
+         arraydata.save()
+       }
+     
+   }
+  
+  //  arraydata()
